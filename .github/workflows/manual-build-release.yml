@@ -276,17 +276,15 @@ jobs:
         env:
           VERSION: ${{ inputs.version }}
         run: |
-          mkdir -p zipped_assets
+          mkdir -p "$GITHUB_WORKSPACE/zipped_assets"
           ls -R ./release_assets
           for d in ./release_assets/*/; do
             [ -d "$d" ] || continue
             name="$(basename "$d")"
-            cd "$d"
-            zip -r "../../../zipped_assets/${name}-${VERSION}.zip" .
-            cd - > /dev/null
+            (cd "$d" && zip -r "$GITHUB_WORKSPACE/zipped_assets/${name}-${VERSION}.zip" .)
           done
           echo "--- zipped_assets ---"
-          ls -la ./zipped_assets
+          ls -la "$GITHUB_WORKSPACE/zipped_assets"
 
       - name: Publish Release
         uses: softprops/action-gh-release@v2
